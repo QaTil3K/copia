@@ -1,3 +1,155 @@
+const http = require('http');
+const express = require('express');
+const app = express();
+app.get("/", (request, response) => {
+  console.log(Date.now() + " Ping Received");
+  response.sendStatus(200);
+});
+app.listen(process.env.PORT);
+setInterval(() => {
+  http.get(`http://${process.env.PROJECT_DOMAIN}.glitch.me/`);
+}, 280000);
+
+
+const Discord = require('discord.js');
+const { Client, Util} = require('discord.js');
+const config = require("./config.json");
+const YouTube = require('simple-youtube-api');
+const ytdl = require('ytdl-core');
+const client = new Client({ disableEveryone: true});
+
+const Enmap = require("enmap");
+const fs = require("fs");
+const jimp =require("jimp")
+const bot = new Discord.Client();
+const db = require('node-json-db');
+bot.request = require("request")
+bot.moment = require("moment")
+bot.URL = require("url")
+let xp = require("./xp.json");
+
+
+//message.channel.send('Verifique suas mensagens privadas ✔️').then(msg => msg.delete(4000));
+
+client.config = config;
+
+
+//handlers
+fs.readdir("./events/", (err, files) => {
+  if (err) return console.error(err);
+  files.forEach(file => {
+    const event = require(`./events/${file}`);
+    let eventName = file.split(".")[0];
+    client.on(eventName, event.bind(null, client));
+  });
+});
+client.commands = new Enmap();
+fs.readdir("./comandos/", (err, files) => {
+  if (err) return console.error(err);
+  files.forEach(file => {
+    if (!file.endsWith(".js")) return;
+    let props = require(`./comandos/${file}`);
+    let commandName = file.split(".")[0];
+    client.commands.set(commandName, props);
+  });
+});
+client.commands = new Enmap();
+fs.readdir("./staff/", (err, files) => {
+
+  if (err) return console.error(err);
+  files.forEach(file => {
+    if (!file.endsWith(".js")) return;
+    let props = require(`./staff/${file}`);
+    let commandName = file.split(".")[0];
+    client.commands.set(commandName, props);
+  });
+});
+
+//LABNEGRO
+client.on('guildCreate', guild => {
+  const moment = require('moment') //npm i moment
+   let canal = client.channels.get('527173228641255434')
+   let embedentrada = new Discord.RichEmbed()
+   .setTitle(`**Acabei de entrar num servidor!** \ <@409710803550208000>\ `)
+   .addField(`**<a:sim:482171966833426432>Nome do servidor:**`, `\`${guild.name}\`` )
+   .addField(`**<:servers:627614948914102288>:Id do servidor:**`, `\`${guild.id}\``, true)
+   .addField('**<:members:627614889288138765>Membros:**', `\`${guild.memberCount}\``, true)
+   .addField('**<a:carrega:627616622596587570>Região do servidor:**', `\`${guild.region}\``, true)
+   .addField('**<a:dono:624778478440677391>Dono:**', `${guild.owner}`, true)
+   .addField('**<a:masi:478003266815262730>Id do dono:**', `\`${guild.ownerID}\``, true)
+   .addField('**<a:hd:471788546466775061>Criado em:**', `\`${moment.utc(guild.createdAt).format('lll')}\``, true)
+   .setTimestamp()
+   .setColor('RANDOM')
+
+   canal.send(embedentrada)
+});
+
+
+bot.on('guildMemberAdd', member => {
+  let channel = member.guild.channels.find('name', 'channel.name');
+  let memberavatar = member.user.avatarURL
+      if (!channel) return;
+      let embed = new Discord.RichEmbed()
+      .setColor('RANDOM')
+      .setThumbnail(memberavatar)
+      .addField('Bem vindo!', `${member}`, true)
+      .addField('Temos atualmente: ', `${member.guild.memberCount} pessoas no server.`, true)
+      .addField("Nome", `<@` + `${member.id}` + `>`, true)
+      .addField('Servidor', `${member.guild.name}`, true )
+      .setFooter(`**${member.guild.name}**`)
+      .setTimestamp()
+
+      channel.sendEmbed(embed);
+});
+
+client.on('typingStart', (channel, user) => {
+ let canal = client.channels.get('629787819388305434')
+  let embedsda = new Discord.RichEmbed()
+      .setDescription(`${user.username} está escrevendo no ${channel.name}`)
+ canal.send(embedsda);
+  
+});
+ bot.on("message", async message => {
+
+
+  
+
+  let xpAdd = Math.floor(Math.random() * 7) + 8;
+  console.log(xpAdd);
+
+  if(!xp[message.author.id]){
+    xp[message.author.id] = {
+      xp: 0,
+      level: 1
+    };
+  }
+
+
+  let curxp = xp[message.author.id].xp;
+  let curlvl = xp[message.author.id].level;
+  let nxtLvl = xp[message.author.id].level * 300;
+  xp[message.author.id].xp =  curxp + xpAdd;
+  if(nxtLvl <= xp[message.author.id].xp){
+    xp[message.author.id].level = curlvl + 1;
+    let lvlup = new Discord.RichEmbed()
+    .setTitle("Level Up!")
+    .addField("New Level", curlvl + 1);
+
+    message.channel.send(lvlup).then(msg => {msg.delete(5000)});
+  }
+  fs.writeFile("./xp.json", JSON.stringify(xp), (err) => {
+    if(err) console.log(err)
+  });
+
+  
+  let messageArray = message.content.split(" ");
+  let cmd = messageArray[0];
+  let args = messageArray.slice(1);
+
+  let commandfile = bot.commands.get(cmd.slice(prefix.length));
+  if(commandfile) commandfile.run(bot,message,args);
+
+});
 
 const youtube = new YouTube(config.GOOGLE_API_KEY);
 const PREFIX = config.prefix;
@@ -402,3 +554,5 @@ function play(guild, song){
                 .setColor([226, 50, 41])
             return serverQueue.textChannel.sendEmbed(embedfunction1);
 }
+
+client.login(config.token);
