@@ -1,16 +1,5 @@
-```
-
- 
-let coins = require("./coins.json");
-let xp = require("./xp.json");
-let purple = config.purple;
-let cooldown = new Set();
-let cdseconds = 5;
-client.prefix = config.defaultPrefix;
-client.commands = new Enmap();
- 
-client.on("message", async message => {
-
+client.on("message", async message => {//
+let canal = client.channels.get('628697820232417290')
     if(message.author.bot) return;
     if(message.channel.type === "dm") return;
   
@@ -74,4 +63,50 @@ client.on("message", async message => {
     fs.writeFile("./xp.json", JSON.stringify(xp), (err) => {
       if(err) console.log(err)
     });
-```
+});
+
+
+
+
+const activity = [
+        
+    //jogando
+     {name: `alegria para ${client.users.size} pessoas`, type: 0, url: "https://www.google.com"},//jogando
+    {name: `Rick, Carl e Judith no fundo do poço`, type: 0, url: "https://www.google.com"},
+     {name: `The Walking Dead`, type: 0, url: "https://www.google.com"},
+    
+    
+    //transmitindo
+    {name: `para ${client.guilds.size} servidores!`, type: 1, url: "https://www.twitch.tv/qatil3k"},
+    {name: `💸Quer me ajudar a ficar on-line?💸 e+doar ou e+vip`, type: 1, url: "https://www.twitch.tv/qatil3k"},
+     {name: `quer reportar algum bug? e+bug `, type: 1, url: "https://www.twitch.tv/qatil3k"},
+    {name: `você pode sugerir comandos para mim! e+sugerir`, type: 1, url: "https://www.twitch.tv/qatil3k"},
+    {name: `Droga é o Braian`, type: 1, url: "https://www.twitch.tv/qatil3k"},
+    {name: `👫Será que sai um casal hoje no e+shipar?👫`, type: 1, url: "https://www.twitch.tv/qatil3k"},
+    {name: `🎤Venha participar do Karaoke🎤`, type: 1, url: "https://www.twitch.tv/qatil3k"},
+    {name: `🎮Você joga COD?🎮Me adicione e vamos jogar juntos:QaTil3K`, type: 1, url: "https://www.twitch.tv/qatil3k"},
+    {name: `😍+😂+😝 = EU 😚`, type: 1, url: "https://www.twitch.tv/qatil3k"},
+    {name: `Você partiu meu 💔`, type: 1, url: "https://www.twitch.tv/qatil3k"},//
+    {name: `Quer escultar o batidão🎶?e+play ou e+musica `, type: 1, url: "https://www.twitch.tv/qatil3k"},
+    
+    
+    
+    //ouvindo
+    {name: "Quer ouvir minha playlist favorita de musica? e+play loritta playlist", type: 2, url: "https://www.google.com"},
+     {name: "Marshmello - Blocks (Official Music Video)", type: 2, url: "https://www.google.com"},
+    {name: "Precisa de ajuda? e+ajuda", type: 2, url: "https://www.google.com"},
+    //assistindo
+      {name: `${client.users.size} pessoas diferentes`, type: 3, url: "https://www.google.com"},
+    {name: "Sabia que eu sou a irmã mais nova da Loritta Morenitta?", type: 3, url: "https://www.google.com"},
+    {name: "VIS A VIS", type: 3, url: "https://www.google.com"},
+    ];
+
+// Crie Suas Mensagens para o Status de acordo com o tipo de mensagem que você quer, aí estão exemplos de uma de cada, você pode fzr quantos quiser!
+    
+    function cs() {
+        const random = activity[Math.floor(Math.random() * activity.length)];
+        client.user.setPresence({game: random});
+           
+    }
+    
+    setInterval(cs, 12000)
